@@ -23,7 +23,7 @@ const insertListOfImgs = (item) => {
   galleryOfImgs.insertAdjacentHTML("beforeend", item)
 };
 // Створюємо галерею картинок з масиву об'єктів galleryItems і додаємо її в розмітку
-insertListOfImgs(createRenderListOfImgs(galleryItems)); 
+insertListOfImgs(createRenderListOfImgs(galleryItems));
 // Виводимо в консоль галерею картинок
 console.log(galleryItems);
 
@@ -31,12 +31,15 @@ console.log(galleryItems);
 
 const galleryOfImgs = document.querySelector('.gallery');
 galleryOfImgs.addEventListener("click", onImgClick);
-
+// 4. Відкриття модального вікна по кліку на елементі галереї
 function onImgClick(e) {
   e.preventDefault();
+  window.addEventListener('keydown', onEscKeyPress)
+
   if (e.target.nodeName !== 'IMG') {
     return
   }
+
   const urlOfOriginImg = e.target.dataset.source;
   const instance = basicLightbox.create(`
     <img
@@ -45,10 +48,19 @@ function onImgClick(e) {
         data-source = ${galleryOfImgs.original}
         alt = ${galleryOfImgs.description}
         
-      />
-`)
+      />`
+  )
   instance.show()
+  // Закриття картинки по кліку на ESC і зняття слухача подій з цієї кнопки
+  function onEscKeyPress(e) {
+    if (e.code === 'Escape' && instance.visible()) {
+      window.removeEventListener('keydown', onEscKeyPress);
+      instance.close()
+    }
+  }
 }
+
+
 
 
 
