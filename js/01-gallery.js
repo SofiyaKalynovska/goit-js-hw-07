@@ -34,31 +34,39 @@ galleryOfImgs.addEventListener("click", onImgClick);
 // 4. Відкриття модального вікна по кліку на елементі галереї
 function onImgClick(e) {
   e.preventDefault();
-  window.addEventListener('keydown', onEscKeyPress)
-
   if (e.target.nodeName !== 'IMG') {
-    return
+    return;
   }
-
   const urlOfOriginImg = e.target.dataset.source;
+  const lightboxEscConfig = {
+    onShow: () => {
+      document.addEventListener('keydown', onEscKeyPress);
+    },
+    onClose: () => {
+      document.removeEventListener('keydown', onEscKeyPress);
+    }
+  }
   const instance = basicLightbox.create(`
     <img
         class = "gallery__image"
         src = ${urlOfOriginImg}
         data-source = ${galleryOfImgs.original}
         alt = ${galleryOfImgs.description}
-        
-      />`
-  )
-  instance.show()
+      />`,
+    lightboxEscConfig
+  );
+    instance.show()
+  
   // Закриття картинки по кліку на ESC і зняття слухача подій з цієї кнопки
   function onEscKeyPress(e) {
     if (e.code === 'Escape' && instance.visible()) {
-      window.removeEventListener('keydown', onEscKeyPress);
       instance.close()
     }
   }
 }
+
+
+
 
 
 
